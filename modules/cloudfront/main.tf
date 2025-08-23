@@ -1,17 +1,9 @@
-resource "aws_cloudfront_origin_access_control" "oac" {
-  name                              = "${var.project}-oac"
-  origin_access_control_origin_type = "web"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-
 resource "aws_cloudfront_distribution" "this" {
   enabled = true
 
   origin {
-    domain_name              = var.origin_domain_name
-    origin_id                = "nginx-origin"
-    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+    domain_name = var.origin_domain_name
+    origin_id   = "nginx-origin"
 
     custom_origin_config {
       http_port              = 80
