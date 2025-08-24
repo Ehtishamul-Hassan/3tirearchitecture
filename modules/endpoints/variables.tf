@@ -1,55 +1,29 @@
 variable "vpc_id" {
-  description = "VPC ID"
+  description = "The ID of the VPC where the endpoints will be created"
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "Candidate private subnet IDs across AZs; module will auto-pick 1 per AZ"
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs for interface endpoints"
   type        = list(string)
-}
-
-# Backward-compatible: you can pass either endpoint_sg_id (preferred) or sg_id
-variable "endpoint_sg_id" {
-  description = "Security Group ID for Interface endpoints"
-  type        = string
-  default     = null
-}
-
-variable "sg_id" {
-  description = "Deprecated: use endpoint_sg_id instead"
-  type        = string
-  default     = null
-}
-
-variable "region" {
-  description = "AWS Region; if null, detected automatically"
-  type        = string
-  default     = null
-}
-
-variable "interface_endpoints" {
-  description = "List of interface endpoint service short names"
-  type        = list(string)
-  default = [
-    "ssm",
-    "ssmmessages",
-    "ec2messages",
-    "logs",
-    "secretsmanager",
-    "ecr.api",
-    "ecr.dkr",
-    "sts"
-  ]
-}
-
-variable "gateway_endpoints" {
-  description = "Gateway endpoints to create"
-  type        = list(string)
-  default     = ["s3", "dynamodb"]
 }
 
 variable "private_route_table_ids" {
-  description = "(Optional) Private route table IDs to associate with Gateway endpoints"
+  description = "List of private route table IDs for gateway endpoints"
   type        = list(string)
-  default     = []
+}
+
+variable "interface_endpoints" {
+  description = "List of AWS services (short names) to create Interface endpoints (e.g., ssm, ec2, logs)"
+  type        = list(string)
+}
+
+variable "gateway_endpoints" {
+  description = "List of AWS services (short names) to create Gateway endpoints (e.g., s3, dynamodb)"
+  type        = list(string)
+}
+
+variable "endpoint_sg_id" {
+  description = "Security Group ID for interface endpoints"
+  type        = string
 }
