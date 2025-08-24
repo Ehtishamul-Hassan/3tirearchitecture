@@ -6,24 +6,30 @@ locals {
 }
 
 # Look up AZ for each provided subnet
-data "aws_subnet" "selected" {
+
+data "aws_subnets" "all" {
+  filter {
+    name   = "subnet-id"
+    values = var.subnet_ids
+  }
+}
+
+data "aws_subnet" "all" {
   for_each = toset(var.subnet_ids)
   id       = each.value
 }
 
-# Build list of unique AZs and pick exactly one subnet per AZ
 locals {
-  azs = distinct([for s in values(data.aws_subnet.selected) : s.availability_zone])
+  azs = distinct([for s in data.aws_subnet.all : s.availability_zone])
 
-  # map AZ -> [subnet ids in that AZ]
-  subnets_by_az = {
-    for az in local.azs :
-    az => [for s in values(data.aws_subnet.selected) : s.id if s.availability_zone == az]
-  }
-
-  # choose the first subnet from each AZ bucket (one per AZ)
-  one_per_az = [for az in local.azs : local.subnets_by_az[az][0]]
+  # pick the *first* subnet in each AZ
+  one_per_az = [
+    for az in local.azs : (
+      [for s in data.aws_subnet.all : s.id if s.availability_zone == az][0]
+    )
+  ]
 }
+
 
 #########################
 # Interface Endpoints
@@ -56,13 +62,22 @@ resource "aws_vpc_endpoint" "gw" {
 
 # Associate gateway endpoints to private route tables (if provided)
 resource "aws_vpc_endpoint_route_table_association" "s3_assoc" {
-  for_each        = toset(contains(var.gateway_endpoints, "s3") ? var.private_route_table_ids : [])
+  for_each = {
+    for idx, rt in var.private_route_table_ids :
+    idx => rt
+    if contains(var.gateway_endpoints, "s3")
+  }
   vpc_endpoint_id = aws_vpc_endpoint.gw["s3"].id
   route_table_id  = each.value
 }
 
 resource "aws_vpc_endpoint_route_table_association" "dynamodb_assoc" {
-  for_each        = toset(contains(var.gateway_endpoints, "dynamodb") ? var.private_route_table_ids : [])
+  for_each = {
+    for idx, rt in var.private_route_table_ids :
+    idx => rt
+    if contains(var.gateway_endpoints, "dynamodb")
+  }
   vpc_endpoint_id = aws_vpc_endpoint.gw["dynamodb"].id
   route_table_id  = each.value
 }
+
