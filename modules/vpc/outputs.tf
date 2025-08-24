@@ -19,3 +19,4 @@ output "private_route_table_ids" {
   description = "Private route tables (one per AZ)"
   value       = [for rt in aws_route_table.private : rt.id]
 }
+
