@@ -14,11 +14,27 @@ module "vpc" {
 }
 
 module "endpoints" {
-  source  = "./modules/endpoints"
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.private_subnet_ids_all
-  sg_id   = module.vpc.endpoints_sg_id
+  source = "./modules/endpoints"
+
+  vpc_id = module.vpc.vpc_id
+  region = var.region
+
+  # Feed all private subnets; module auto-picks one per AZ
+  subnet_ids = module.vpc.private_subnet_ids_all
+
+  # SG created in your VPC module for endpoints
+  endpoint_sg_id = module.vpc.endpoints_sg_id
+
+  # Keep or edit the defaults as you need
+  interface_endpoints = [
+    "ssm", "ssmmessages", "ec2messages", "logs", "secretsmanager", "ecr.api", "ecr.dkr", "sts"
+  ]
+
+  # Attach to private route tables (only if you added the VPC output above)
+  private_route_table_ids = try(module.vpc.private_route_table_ids, [])
 }
+
+
 
 # Nginx Reverse Proxy (public) behind an ALB (CloudFront origin)
 module "nginx_proxy" {
@@ -89,11 +105,7 @@ module "rds" {
   password       = var.db_password
 }
 
-# CloudFront + WAF (origin = Nginx public ALB)
-# module "waf" {
-#   source      = "./modules/waf"
-#   project     = var.project
-# }
+
 
 module "cloudfront" {
   source             = "./modules/cloudfront"
