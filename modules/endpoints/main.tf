@@ -1,10 +1,3 @@
-variable "vpc_id" {}
-variable "private_subnet_ids" { type = list(string) }
-variable "private_route_table_ids" { type = list(string) }
-variable "interface_endpoints" { type = list(string) }
-variable "gateway_endpoints" { type = list(string) }
-variable "endpoint_sg_id" {}
-
 data "aws_region" "current" {}
 
 resource "aws_vpc_endpoint" "iface" {
