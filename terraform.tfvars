@@ -19,7 +19,7 @@ db_subnet_cidrs       = ["10.0.31.0/24", "10.0.32.0/24"]
 # ------------------------
 nginx_ami_id        = "ami-0c4a668b99e68bbde" # replace with latest Amazon Linux 2 AMI
 nginx_instance_type = "t2.micro"
-key_name            = "MUMBAIKeyPair"
+key_name            = "MumbaiKeyPair"
 
 # ------------------------
 # Frontend ASG
