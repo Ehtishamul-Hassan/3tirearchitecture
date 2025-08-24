@@ -39,7 +39,7 @@ resource "aws_cloudfront_distribution" "this" {
     cloudfront_default_certificate = true
   }
 
-  web_acl_id  = var.waf_web_acl_arn
+
   price_class = "PriceClass_100"
 }
 

@@ -37,7 +37,7 @@ backend_instance_type = "t2.micro"
 # RDS Database
 # ------------------------
 db_engine         = "mysql"
-db_engine_version = "8.0.35"
+db_engine_version = "8.0.42"
 db_instance_class = "db.t3.micro"
 db_name           = "securelibrarymanagementsystem"
 db_username       = "root"
