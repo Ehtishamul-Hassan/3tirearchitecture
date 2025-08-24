@@ -19,7 +19,7 @@ module "endpoints" {
   vpc_id                  = module.vpc.vpc_id
   private_subnet_ids      = module.vpc.private_subnet_ids_all
   private_route_table_ids = module.vpc.private_route_table_ids
-  interface_endpoints     = ["s3", "ec2"]      # example
+  interface_endpoints     = ["ec2"]            # example
   gateway_endpoints       = ["s3", "dynamodb"] # example
   endpoint_sg_id          = module.vpc.endpoints_sg_id
 }

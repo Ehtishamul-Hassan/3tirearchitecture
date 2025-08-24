@@ -1,5 +1,6 @@
 data "aws_region" "current" {}
 
+# --- Interface Endpoints (EC2, CloudWatch, Logs, SSM, KMS, etc.) ---
 resource "aws_vpc_endpoint" "iface" {
   for_each            = toset(var.interface_endpoints)
   vpc_id              = var.vpc_id
@@ -10,6 +11,7 @@ resource "aws_vpc_endpoint" "iface" {
   security_group_ids  = [var.endpoint_sg_id]
 }
 
+# --- Gateway Endpoints (S3, DynamoDB) ---
 resource "aws_vpc_endpoint" "gw" {
   for_each          = toset(var.gateway_endpoints)
   vpc_id            = var.vpc_id
